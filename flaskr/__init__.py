@@ -30,16 +30,31 @@ def create_app(test_config=None):
     def hello():
         return "Hello, World!"
 
+    @app.route('/test')
+    def test():
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        host = 'localhost'
+        port = 443
+        
+        if s.connect_ex((host, port)):
+            print('the port is closed.')
+        else:
+            print('the port is open.')
+
+        return "test"
+
     # register the database commands
     from flaskr import db
 
     db.init_app(app)
 
     # apply the blueprints to the app
-    from flaskr import auth, blog
+    from flaskr import auth, blog, port_scanner
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(blog.bp)
+    app.register_blueprint(port_scanner.bp)
 
     # make url_for('index') == url_for('blog.index')
     # in another app, you might define a separate main index here with
